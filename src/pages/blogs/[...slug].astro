@@ -1,0 +1,54 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+import Layout from "../../layouts/blogs.astro";
+import { blogsManager } from "../../cloudstate/blogStat";
+import { BlogStatComponent } from "../../components/BlogStat";
+// component import
+
+export async function getStaticPaths() {
+  const Allblogs = await getCollection("blogs");
+
+  return Allblogs.map((blog) => ({
+    params: { slug: blog.slug },
+    props: {
+      blog,
+    },
+  }));
+}
+
+interface Props {
+  blog: CollectionEntry<"blogs">;
+}
+
+const { blog } = Astro.props;
+const { Content } = await blog.render();
+
+export const prerender = true;
+---
+
+<Layout content={blog}>
+  <Content />
+  <div class="redirect m-0">
+    <div class="tags flex pb-[0]">
+      <p class="text-zinc-500 dark:text-neutral-400 p-y[0.3rem] text-sm">
+        &gt Related Tags:&nbsp
+      </p>
+      {
+        blog.data.tags.map((tag) => (
+          <p class="tag p-y[0.1rem] px-[0.2rem]">
+            <a
+              class="ll text-zinc-500 dark:text-neutral-400 decoration-dashed underline font-semibold text-sm"
+              href={`/blogs/tags/${tag}`}
+            >
+              #{tag}
+            </a>
+          </p>
+        ))
+      }
+    </div>
+    <a class="decoration-none text-zinc-500 dark:text-neutral-400" href="/"
+      >&gt cd</a
+    >
+  </div>
+  <BlogStatComponent id={Astro.params.slug} client:load />
+</Layout>

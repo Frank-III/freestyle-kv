@@ -1,77 +1,57 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import { counter } from "../cloudstate/counter";
-import Title from "../components/Title.astro";
+import Layout from "../layouts/Global.astro";
+// import type { Article } from "../types/article";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
+import { getCollection } from "astro:content";
+import type { blogg } from "../schemas";
+import { filterblog, sort_ } from "../utils";
+import ContentBlock from "../components/ContentBlock.astro";
+// Return the list of articles in the "articles" directory
+const blogs = await getCollection("blogs");
 
-if (Astro.request.method === "POST") {
-  await counter.increment();
-
-  // so that form isn't resubmitted on reload
-  return new Response(null, {
-    status: 303,
-    headers: {
-      Location: "/",
-    },
-  });
-}
-
-const count = await counter.getCount();
+// Parse the date of each article, sort by date descending and return an array of the 4 last articles
+const sortedblogs = sort_(blogs, false);
+const [finished, _] = filterblog(sortedblogs, (blog) => {
+  return blog.isdraft === false;
+});
+const [pined, unpined] = filterblog(finished.slice(0, 4), (blog) => {
+  return blog.pined;
+});
 ---
 
-<Layout title="Freestyle Astro">
-  <main>
-    <div>
-      <Title />
-      <form method="post">
-        <button> this button has been clicked {count} times </button>
-      </form>
-    </div>
-  </main>
+<Layout
+  title="Frank"
+  description="I'm Frank, a 22 years old ORIE student. I occasionally publish articles about programming and tech."
+>
+  <div class="">
+    <h2
+      class="max-w-fit lg:text-4xl md:text-3xl text-2xl font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent"
+    >
+      Hi there <span
+        class="lg:text-4xl md:text-3xl text-2xl font-bold text-black">👋</span
+      >
+    </h2>
+    <p class="text-md mt-2 text-dark/100 dark:text-white/60 text-sm">
+      I'm Frank, a student major in Operation Reasearch at UIUC. <br />
+      On this website, I publish articles about what I've discovered and created.
+    </p>
+  </div>
+
+  <h2 class="text-base md:text-xl mt-8 mb-4 text-dark/150 dark:text-white/90">
+    {sortedblogs.length > 1 ? "Latest blogs" : "Latest blog"}
+  </h2>
+  <div class="flex flex-wrap gap-3">
+    {pined.map((blog) => <ContentBlock blog={blog} ishome={true} />)}
+    {unpined.map((blog) => <ContentBlock blog={blog} ishome={true} />)}
+  </div>
+  <div class="flex justify-center py-5">
+    <a
+      href="/blogs"
+      class="gradient-hover text-neutral-600 dark:text-zinc-300 text-center font-semibold w-[60%] sm:w-[24%] bg-black/3 dark:bg-white/5 px-2 py-1 rounded-lg hover:scale-105 transition-transform duration-150 ease-in-out"
+    >
+      View more
+    </a>
+  </div>
 </Layout>
-
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    background-color: rgb(37, 37, 44);
-  }
-
-  main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: sans-serif;
-    color: white;
-    margin-top: 2rem;
-  }
-
-  div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  h1 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-  }
-
-  button {
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    background-color: #0070f3;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-  button:hover {
-    background-color: #0053b3;
-  }
-
-  form {
-    display: grid;
-    gap: 2rem;
-  }
-</style>

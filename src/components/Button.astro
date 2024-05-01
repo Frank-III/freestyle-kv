@@ -1,0 +1,24 @@
+---
+export interface Props {
+  href?: string;
+}
+
+const { href } = Astro.props;
+---
+
+<a href={href}>
+  <button
+    class="gohome py-2 px-4 text-black font-semibold text-sm rounded my-2"
+  >
+    <slot />
+  </button>
+</a>
+<style is:global>
+  .gohome {
+    background-color: #00ffc5;
+    transition: background-color 0.2s ease;
+  }
+  .gohome:hover {
+    background-color: #00d6a4;
+  }
+</style>
