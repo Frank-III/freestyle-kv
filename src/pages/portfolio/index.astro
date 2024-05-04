@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { getCollection } from "astro:content";
 dayjs.extend(customParseFormat);
-import { Icon } from "astro-icon";
+import { Icon } from "astro-icon/components";
 
 const projects = await getCollection("portfolio");
 
@@ -78,9 +78,8 @@ projects.sort((a, b) => {
                 {project.data.description}
               </p>
               <Icon
-                weight="25"
-                height="30"
-                pack="logos"
+                width={25}
+                height={30}
                 name={project.data.language?.toLowerCase()}
                 class="self-end"
               />

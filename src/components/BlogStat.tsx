@@ -1,6 +1,6 @@
 import { useCloudState } from "freestyle-sh";
 import { BlogStat, blogsManager, type Comment } from "../cloudstate/blogStat";
-import { useEffect, useState, FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 interface BlogStatProps {
   id: string;
 }
@@ -45,6 +45,8 @@ export function BlogStatComponent({ id }: BlogStatProps) {
       name: formData.get("name") as string,
       comment: formData.get("comment") as string,
     });
+    formData.set("name", "");
+    formData.set("comment", "");
     setStatData({ ...statData, comments: [comment, ...statData?.comments] });
   };
 
@@ -143,41 +145,51 @@ export function BlogStatComponent({ id }: BlogStatProps) {
       </div>
       <div className="flex flex-col items-start w-full">
         <h3>Comments</h3>
-        <form className="w-full space-x-2 flex flex-row" onSubmit={addComment}>
-          <label htmlFor="name">
-            Name
+        <form
+          className="w-full flex flex-row items-end space-x-2"
+          onSubmit={addComment}
+        >
+          <label htmlFor="name" className="flex flex-col items-start">
+            <span className="ml-2 my-2">Name</span>
             <input
               type="text"
               id="name"
               name="name"
               required
-              className="flex flex-[0.3]"
+              placeholder="what is your name 🤗"
+              className="h-9 rounded-full px-4 "
             />
           </label>
-          <label htmlFor="comment">
-            Comment
+          <label
+            htmlFor="comment"
+            className="flex flex-col flex-grow items-start"
+          >
+            <span className="ml-2 my-2">Comment</span>
             <input
               type="text"
               id="comment"
               name="comment"
               required
-              className="flex-[0.7]"
+              placeholder="any suggestions or comments 🤔"
+              className="h-9 rounded-full px-4 w-full"
             />
           </label>
           <button
             type="submit"
-            className="px-2 py-1 border rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 "
+            className="px-4 py-1 border rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 font-bold text-emerald-100"
           >
             Submit
           </button>
         </form>
-        {statData &&
-          statData.comments.map((c) => (
-            <div className="flex">
-              <span>{c.name}</span>
-              <span>{c.comment}</span>
-            </div>
-          ))}
+        <div className="mt-3 flex flex-col w-full">
+          {statData &&
+            statData.comments.map((c) => (
+              <div className="inline-flex mx-3 items-center justify-between bg-">
+                <h4 className="">{c.comment}</h4>
+                <span className="">{c.name}</span>
+              </div>
+            ))}
+        </div>
       </div>
     </div>
   );

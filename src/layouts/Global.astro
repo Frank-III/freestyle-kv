@@ -48,10 +48,10 @@ const { title, description, schema } = Astro.props;
         return "light";
       })();
 
-      document.documentElement.classList.add(theme);
+      document.documentElement.classList.add(theme!);
 
       // Once you've set the theme, you can remove the no flash screen
-      document.getElementById("no-flash-screen").style.display = "none";
+      document.getElementById("no-flash-screen")!.style.display = "none";
 
       const handleToggleClick = () => {
         const element = document.documentElement;
@@ -63,7 +63,7 @@ const { title, description, schema } = Astro.props;
       };
 
       document
-        .getElementById("checkbox")
+        .getElementById("checkbox")!
         .addEventListener("click", handleToggleClick);
     </script>
     <style is:global>
